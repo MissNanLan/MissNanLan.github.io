@@ -105,3 +105,13 @@ deploy:
   - type: git
     repo: https://github.com/MissNanLan/MissNanLan.github.io
     branch: gh-pages
+<<<<<<< HEAD
+=======
+  - type: git 
+    repo: https://github.com/MissNanLan/MissNanLan.github.io
+    branch: master
+    extend_dirs: /
+    ignore_hidden: false
+    ignore_pattern:
+        public: .
+>>>>>>> 1255314d11a0c1cd8e082907945569dffcfcbd54

@@ -9,6 +9,7 @@ hexo deploy
 
 git add -A
 git commit -m $change 
+git pull --rebase
 git push 
 
 echo "===================  end   deploy ==============================="
