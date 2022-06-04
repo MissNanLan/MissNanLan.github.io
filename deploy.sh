@@ -6,7 +6,7 @@ echo "===========  start deploy  ==========="
 read change 
 
 
-git add .
+git add -A
 git commit  -m $change 
 git push 
 
