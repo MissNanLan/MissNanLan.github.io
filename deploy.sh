@@ -6,6 +6,7 @@ echo "===========  start deploy  ==========="
 read change 
 
 git checkout master
+git pull --rebase
 git add .
 git commit --amend --reset-author -m $change 
 git push 
