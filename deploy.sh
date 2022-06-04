@@ -5,10 +5,9 @@ echo "===========  start deploy  ==========="
 /bin/echo -n "输入改动信息: "
 read change 
 
-git checkout master
-git pull --rebase
+
 git add .
-git commit --amend --reset-author -m $change 
+git commit  -m $change 
 git push 
 
 
