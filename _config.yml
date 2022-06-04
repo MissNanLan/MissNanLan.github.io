@@ -104,7 +104,7 @@ theme: one-paper
 deploy:
   - type: git
     repo: https://github.com/MissNanLan/MissNanLan.github.io
-    branch: master
+    branch: gh-pages
     message: ''
   - type: git 
     repo: https://github.com/MissNanLan/MissNanLan.github.io
