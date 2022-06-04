@@ -38,6 +38,32 @@
                 <div class="post-list">
     
     <div class="post">
+        <a class="post-title" href="/2022/06/04/%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B/">编译流程</a>
+        <div class="post-except">
+            编译流程parse通过parse 转成AST语法树。 具体是把源代码转成转成机器能够理解的AST，这个过程分为词法分析、 语法分析
+词法分析我们要源码把它分成一个个不能细分的单词（token）的过程称为词法分析
+语法分析我们把token 进行递归的组装，生成AST的过程称为词法分析
+AST
+parse的API
+@babel&#x2F;parser
+
+示例
+12345const parser = require(&#x27;@babel/parser&#x27;);const 
+            <a class="read-more" href="/2022/06/04/%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B/"> ... </a>
+        </div>
+        <div class="post-footer">
+          <div class="post-date">2022.06.04</div>
+          <div class="post-tag">   
+           
+            <span class="post-tag-item">
+                <a href="/tags/babel/">#babel</a>
+            </span>
+            
+          </div>
+        </div>
+    </div>
+    
+    <div class="post">
         <a class="post-title" href="/2022/06/04/%E5%A6%82%E4%BD%95%E5%9C%A8git%E6%9C%AC%E5%9C%B0%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AASSH-keys/">如何在git本地配置多个SSH keys</a>
         <div class="post-except">
             背景公司用 gitlab，git 的地址用的 ssh 地址。众所周知，用 ssh 地址的话则需要在本地产生一个私钥和公钥；而自己的项目用的是 github，git 也用的是 ssh 地址那么这个时候小心你的 .ssh 不要被覆盖了
