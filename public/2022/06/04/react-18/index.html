@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+    <link rel="alternate icon" type="image/png" href="/img/favicon.png">
+    <title>南蓝的技术博客 | </title>
+    
+<link rel="stylesheet" href="/css/reset.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/markdown.css">
+
+    
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+    <body>
+        <div class="paper">
+            <div class="paper-main">
+                
+                    <div class="post-header">
+    <a class="logo" href="/">南蓝的技术博客</a>
+    <a class="go-home" href="/">
+        <svg width="8" height="14" viewBox="0 0 8 14">
+            <path d="M7 1L1 7l6 6" stroke="#000" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </a>
+</div>
+                
+                <div class="post-main">
+
+    
+        <div class="post-main-title">
+            react 18
+        </div>
+        <div class="post-meta">
+            2022-06-04
+        </div>
+    
+
+    <div class="post-md">
+        <h2 id="What-is-Concurrent-React（并发渲染）"><a href="#What-is-Concurrent-React（并发渲染）" class="headerlink" title="What is Concurrent React（并发渲染）"></a>What is Concurrent React（并发渲染）</h2><p>并发模式进行可中断渲染</p>
+<p>查阅了一些资料</p>
+<p>其目的为了提升帮助React应用保持响应，并优雅地适应用户的设备功能和网络速度</p>
+<p>因为有了这个并发渲染，Suspense, transitions, and SSR都是充分<code>并发渲染</code>去构建的</p>
+<h3 id="可重用的状态"><a href="#可重用的状态" class="headerlink" title="可重用的状态"></a>可重用的状态</h3><p>接下来的小版本可能会增加 <code>Offscreen</code></p>
+<h2 id="New-Feature-Automatic-Batching"><a href="#New-Feature-Automatic-Batching" class="headerlink" title="New Feature: Automatic Batching"></a>New Feature: Automatic Batching</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.flushSync()</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions/21">https://github.com/reactwg/react-18/discussions/21</a></p>
+<p>这看起来很像是一个使用者不需要太关心的feature，因为react 18自动处理了。在使用timeouts、promises、natives event handler或者其他events的更新将以与React事件中的更新相同的方式进行批处理，嗯嗯…就是为了减少渲染次数</p>
+<p>懒得复制代码了，直接截图</p>
+<h3 id="函数式组件"><a href="#函数式组件" class="headerlink" title="函数式组件"></a>函数式组件</h3><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b54eae955e743e68642ee6cb9f2e3e0~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>最终只会渲染一次</p>
+<h3 id="Class组件"><a href="#Class组件" class="headerlink" title="Class组件"></a>Class组件</h3><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a4d2731d84f4aa8a7a2ab0fdecb50d1~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h3 id="不想自动批处理"><a href="#不想自动批处理" class="headerlink" title="不想自动批处理"></a>不想自动批处理</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; flushSync &#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span>; <span class="comment">// Note: react-dom, not react</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">handleClick</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title function_">flushSync</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">setCounter</span>(<span class="function"><span class="params">c</span> =&gt;</span> c + <span class="number">1</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">// React has updated the DOM by now</span></span><br><span class="line">  <span class="title function_">flushSync</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">setFlag</span>(<span class="function"><span class="params">f</span> =&gt;</span> !f);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">// React has updated the DOM by now</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>官方不推荐介么做啦</p>
+<h2 id="New-Feature-Transitions"><a href="#New-Feature-Transitions" class="headerlink" title="New Feature Transitions"></a>New Feature Transitions</h2><h2 id="New-Features-Suspense"><a href="#New-Features-Suspense" class="headerlink" title="New  Features Suspense"></a>New  Features Suspense</h2><p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions/37">https://github.com/reactwg/react-18/discussions/37</a></p>
+<h2 id="New-Client-and-Server-Rendering-APIs"><a href="#New-Client-and-Server-Rendering-APIs" class="headerlink" title="New Client and Server Rendering APIs"></a>New Client and Server Rendering APIs</h2><h3 id="Client-Rendering-APIs"><a href="#Client-Rendering-APIs" class="headerlink" title="Client Rendering APIs"></a>Client Rendering APIs</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>Before&#96;</th>
+<th>React 18</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Updates to Client Rendering APIs</td>
+<td>ReactDOM.render</td>
+<td>ReactDOM.createRoot</td>
+</tr>
+<tr>
+<td>Unmount</td>
+<td>unmountComponentAtNode</td>
+<td>root.unmount</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>移除了render的callback</td>
+</tr>
+<tr>
+<td>Server-side rendering</td>
+<td>hydrate</td>
+<td>hydrateRoot</td>
+</tr>
+</tbody></table>
+<h4 id="changed-ReactDOM-render-to-ReactDOM-createRoot"><a href="#changed-ReactDOM-render-to-ReactDOM-createRoot" class="headerlink" title="changed ReactDOM.render to ReactDOM.createRoot"></a>changed <code>ReactDOM.render</code> to <code>ReactDOM.createRoot</code></h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// Before</span></span><br><span class="line"><span class="keyword">import</span> &#123; render &#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span>, container);</span><br><span class="line"></span><br><span class="line"><span class="comment">// After</span></span><br><span class="line"><span class="keyword">import</span> &#123; createRoot &#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom/client&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> root = <span class="title function_">createRoot</span>(container);</span><br><span class="line">root.<span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="changed-unmountComponentAtNode-to-root-unmount"><a href="#changed-unmountComponentAtNode-to-root-unmount" class="headerlink" title="changed unmountComponentAtNode to root.unmount"></a>changed <code>unmountComponentAtNode</code> to <code>root.unmount</code></h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Before</span></span><br><span class="line"><span class="title function_">unmountComponentAtNode</span>(container);</span><br><span class="line"></span><br><span class="line"><span class="comment">// After</span></span><br><span class="line">root.<span class="title function_">unmount</span>();</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="移除了render的callback"><a href="#移除了render的callback" class="headerlink" title="移除了render的callback"></a>移除了render的callback</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Before</span></span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="title class_">ReactDOM</span>.<span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span>, container, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rendered&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// After</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">AppWithCallbackAfterRender</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;rendered&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> root = <span class="title class_">ReactDOM</span>.<span class="title function_">createRoot</span>(container);</span><br><span class="line">root.<span class="title function_">render</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">AppWithCallbackAfterRender</span> /&gt;</span></span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>移除的原因是因为</p>
+<blockquote>
+<p>因为它在使用 Suspense 时通常没有预期的结果</p>
+</blockquote>
+<p>尴尬这个<code>Suspense</code>只是听闻过，但是没有使用过</p>
+<h4 id="SSR-hydrate-替换为-hydrateRoot"><a href="#SSR-hydrate-替换为-hydrateRoot" class="headerlink" title="SSR hydrate 替换为 hydrateRoot"></a>SSR hydrate 替换为 hydrateRoot</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Before</span></span><br><span class="line"><span class="keyword">import</span> &#123; hydrate &#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="title function_">hydrate</span>(<span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span>, container);</span><br><span class="line"></span><br><span class="line"><span class="comment">// After</span></span><br><span class="line"><span class="keyword">import</span> &#123; hydrateRoot &#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom/client&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> root = <span class="title function_">hydrateRoot</span>(container, <span class="language-xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">tab</span>=<span class="string">&quot;home&quot;</span> /&gt;</span></span>);</span><br><span class="line"><span class="comment">//  哈哈，这里可以用不createRoot</span></span><br></pre></td></tr></table></figure>
+
+<p>也没有用过</p>
+<h3 id="Server-Rendering-APIs"><a href="#Server-Rendering-APIs" class="headerlink" title="Server Rendering APIs"></a>Server Rendering APIs</h3><p>The following APIs will continue working, but with limited support for Suspense</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertostring"><code>renderToString()</code></a>（Limited）</li>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertostaticmarkup"><code>renderToStaticMarkup()</code></a>（Limited）</li>
+</ul>
+<p>These additional methods depend on a package (<code>stream</code>) that is <strong>only available on the server</strong>, and won’t work in the browser.</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertopipeablestream"><code>renderToPipeableStream()</code></a> (New)</li>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertoreadablestream"><code>renderToReadableStream()</code></a>(New)</li>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertonodestream"><code>renderToNodeStream()</code></a> (Deprecated)</li>
+<li><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-dom-server.html#rendertostaticnodestream"><code>renderToStaticNodeStream()</code></a>(不变)</li>
+</ul>
+<p>介绍新的API</p>
+<h4 id="renderToPipeableStream"><a href="#renderToPipeableStream" class="headerlink" title="renderToPipeableStream"></a>renderToPipeableStream</h4><p>renderToString&gt;renderToPipeableStream</p>
+<h4 id="renderToReadableStream"><a href="#renderToReadableStream" class="headerlink" title="renderToReadableStream"></a>renderToReadableStream</h4><h2 id="New-Strict-Mode-Behaviors"><a href="#New-Strict-Mode-Behaviors" class="headerlink" title="New Strict Mode Behaviors"></a>New Strict Mode Behaviors</h2><h2 id="新的hooks"><a href="#新的hooks" class="headerlink" title="新的hooks"></a>新的hooks</h2><ul>
+<li><p>useTransition</p>
+</li>
+<li><p>startTransition</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions/41">https://github.com/reactwg/react-18/discussions/41</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions/65">https://github.com/reactwg/react-18/discussions/65</a></p>
+<ul>
+<li>useDeferredValue</li>
+</ul>
+<p>有点类似于防抖的功能</p>
+<ul>
+<li><p>useInsertionEffect</p>
+</li>
+<li><p>useId</p>
+</li>
+<li><p>useSyncExternalStore</p>
+</li>
+</ul>
+<h2 id="从另一个维度看这次更新"><a href="#从另一个维度看这次更新" class="headerlink" title="从另一个维度看这次更新"></a>从另一个维度看这次更新</h2><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/19f6d1dde8d94da7b55b972cf035e006~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions/4">https://github.com/reactwg/react-18/discussions/4</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/reactwg/react-18/discussions">discussions</a>真是个好东西，可以及时看到更新的知识点</p>
+
+    </div>
+
+</div>
+                
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+            </div>
+        </div>
+    </body>
+</html>
