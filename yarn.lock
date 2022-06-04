@@ -722,9 +722,9 @@ hexo-server@^3.0.0:
     picocolors "^1.0.0"
     serve-static "^1.14.1"
 
-hexo-theme-aomori@^1.35.0:
+hexo-theme-aomori@^1.36.0:
   version "1.36.0"
-  resolved "https://registry.npmjs.org/hexo-theme-aomori/-/hexo-theme-aomori-1.36.0.tgz#efec4bb16790ac2078b4c934b92554e355097f9e"
+  resolved "https://registry.yarnpkg.com/hexo-theme-aomori/-/hexo-theme-aomori-1.36.0.tgz#efec4bb16790ac2078b4c934b92554e355097f9e"
   integrity sha512-O5kPMt/fgabms5Loew1ZJAYkTf5OchpQTjsAyzP/rGXRcrZN59z2t+6Mojv5BPWnZI16D1ilJgsNax3aoMx/Mg==
   dependencies:
     dayjs "^1.11.2"
