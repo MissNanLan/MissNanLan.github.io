@@ -7,7 +7,7 @@ read change
 
 git checkout master
 git add .
-git commit -m $change
+git commit --amend --reset-author -m $change 
 git push 
 
 
