@@ -5,7 +5,8 @@ echo "===================  start deploy ==============================="
 read change
 
 rm -rf .deploy_git
-hexo deploy
+hexo g
+hexo d
 
 git add -A
 git commit -m $change 
