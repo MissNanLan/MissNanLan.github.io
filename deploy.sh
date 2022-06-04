@@ -11,7 +11,7 @@ git commit -m $change
 git push 
 
 
-git checkout pages
+# git checkout pages
 hexo clean
 hexo g
 hexo d
