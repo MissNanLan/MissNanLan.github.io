@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+    <link rel="alternate icon" type="image/png" href="/img/favicon.png">
+    <title>南蓝的技术博客 | </title>
+    
+<link rel="stylesheet" href="/css/reset.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/markdown.css">
+
+    
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+    <body>
+        <div class="paper">
+            <div class="paper-main">
+                
+                    <div class="post-header">
+    <a class="logo" href="/">南蓝的技术博客</a>
+    <a class="go-home" href="/">
+        <svg width="8" height="14" viewBox="0 0 8 14">
+            <path d="M7 1L1 7l6 6" stroke="#000" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </a>
+</div>
+                
+                <div class="post-main">
+
+    
+        <div class="post-main-title">
+            plugin
+        </div>
+        <div class="post-meta">
+            2022-06-04
+        </div>
+    
+
+    <div class="post-md">
+        <p>举一个例子，以写一个自动生成API文档为主</p>
+<h2 id="plugin"><a href="#plugin" class="headerlink" title="plugin"></a>plugin</h2><h3 id="调用插件"><a href="#调用插件" class="headerlink" title="调用插件"></a>调用插件</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">const</span> &#123; transformFromAstSync &#125; = <span class="built_in">require</span>(<span class="string">&#x27;@babel/core&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span>  parser = <span class="built_in">require</span>(<span class="string">&#x27;@babel/parser&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> autoDocumentPlugin = <span class="built_in">require</span>(<span class="string">&#x27;./plugin/auto-document-plugin&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取文件</span></span><br><span class="line"><span class="keyword">const</span> sourceCode = fs.<span class="title function_">readFileSync</span>(path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;./sourceCode.ts&#x27;</span>), &#123;</span><br><span class="line">    <span class="attr">encoding</span>: <span class="string">&#x27;utf-8&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转成AST</span></span><br><span class="line"><span class="keyword">const</span> ast = parser.<span class="title function_">parse</span>(sourceCode, &#123;</span><br><span class="line">    <span class="attr">sourceType</span>: <span class="string">&#x27;unambiguous&#x27;</span>,</span><br><span class="line">    <span class="attr">plugins</span>: [<span class="string">&#x27;typescript&#x27;</span>]</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 插件使用</span></span><br><span class="line"><span class="keyword">const</span> &#123; code &#125; = <span class="title function_">transformFromAstSync</span>(ast, sourceCode, &#123;</span><br><span class="line">    <span class="attr">plugins</span>: [[autoDocumentPlugin, &#123;</span><br><span class="line">        <span class="attr">outputDir</span>: path.<span class="title function_">resolve</span>(__dirname, <span class="string">&#x27;./docs&#x27;</span>),</span><br><span class="line">        <span class="attr">format</span>: <span class="string">&#x27;markdown&#x27;</span><span class="comment">// html / json</span></span><br><span class="line">    &#125;]]</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="plugin模板"><a href="#plugin模板" class="headerlink" title="plugin模板"></a>plugin模板</h3><p>plugin 有两种形式</p>
+<h4 id="一个函数返回一个对象的格式"><a href="#一个函数返回一个对象的格式" class="headerlink" title="一个函数返回一个对象的格式"></a>一个函数返回一个对象的格式</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// xx-plugin.js</span></span><br><span class="line"><span class="keyword">const</span> &#123; declare &#125; = <span class="built_in">require</span>(<span class="string">&#x27;@babel/helper-plugin-utils&#x27;</span>);</span><br><span class="line"><span class="comment">// api:  babel 的 api，</span></span><br><span class="line"><span class="comment">// options: 传给plugin的参数</span></span><br><span class="line"><span class="comment">// dirname： 目录名字</span></span><br><span class="line"><span class="keyword">const</span> xxPlugin = <span class="title function_">declare</span>(<span class="function">(<span class="params">api, options, dirname</span>) =&gt;</span> &#123;</span><br><span class="line">    api.<span class="title function_">assertVersion</span>(<span class="number">7</span>);</span><br><span class="line">    <span class="keyword">const</span> xxPlugin = <span class="title function_">declare</span>(<span class="function">(<span class="params">api, options, dirname</span>) =&gt;</span> &#123;</span><br><span class="line">        api.<span class="title function_">assertVersion</span>(<span class="number">7</span>);</span><br><span class="line">        <span class="comment">// name 插件的名字</span></span><br><span class="line">        <span class="comment">// inherits 指定继承某个插件，和当前插件的 options 合并，通过 Object.assign 的方式。</span></span><br><span class="line">        <span class="comment">// pre 遍历前调用</span></span><br><span class="line">        <span class="comment">// visitor 指定 traverse 时调用的函数。</span></span><br><span class="line">        <span class="comment">// post 遍历后调用</span></span><br><span class="line">        <span class="comment">// manipulateOptions 用于修改 options，是在插件里面修改配置的方式，比如 babel-plugin-syntax-xx, 一般都会修改 parser options</span></span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="attr">name</span>: <span class="string">&quot;proposal-export-namespace-from&quot;</span>,</span><br><span class="line">            <span class="attr">inherits</span>: syntaxExportNamespaceFrom.<span class="property">default</span>,</span><br><span class="line">            <span class="title function_">pre</span>(<span class="params">file</span>) &#123;</span><br><span class="line">                <span class="comment">// 代码逻辑</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">visitor</span>: &#123;</span><br><span class="line">                <span class="title class_">FunctionDeclaration</span>(path, state) &#123;</span><br><span class="line">                    <span class="comment">// 代码逻辑</span></span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="title function_">manipulateOptions</span>(<span class="params">opts, parserOpts</span>) &#123;   </span><br><span class="line">                <span class="comment">// 告诉 parser 要 parse xxx这个语法,如jsx </span></span><br><span class="line">                 parserOpts.<span class="property">plugins</span>.<span class="title function_">push</span>(<span class="string">&quot;xxx&quot;</span>);</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="title function_">post</span>(<span class="params">file</span>) &#123;</span><br><span class="line">                <span class="comment">// 代码逻辑</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p> 在babel官网找了几个插件的写法</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/babel/babel/blob/main/packages/babel-plugin-proposal-export-default-from/src/index.ts">babel-plugin-proposal-export-default-from</a></p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/babel/babel/blob/main/packages/babel-plugin-proposal-function-bind/src/index.ts">babel-plugin-proposal-function-bind</a></p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/babel/babel/blob/main/packages/babel-plugin-proposal-numeric-separator/src/index.ts">babel-plugin-proposal-numeric-separator</a></p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/babel/babel/tree/main/packages/babel-plugin-syntax-export-default-from">babel-plugin-syntax-export-default-from</a></p>
+<h4 id="直接返回一个对象"><a href="#直接返回一个对象" class="headerlink" title="直接返回一个对象"></a>直接返回一个对象</h4><p> 这种方式的插件形式用于不需要处理参数的情况,这种我在官网还没有找到</p>
+  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> plugin = &#123;</span><br><span class="line">  <span class="title function_">pre</span>(<span class="params">state</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">visitor</span>: &#123;</span><br><span class="line">    <span class="title class_">StringLiteral</span>(path, state) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">cache</span>.<span class="title function_">set</span>(path.<span class="property">node</span>.<span class="property">value</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="title function_">post</span>(<span class="params">state</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">cache</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="visitor模式"><a href="#visitor模式" class="headerlink" title="visitor模式"></a>visitor模式</h3><blockquote>
+<p>visitor模式（访问者模式），作为设计模式的其中一种。访问者模式解决的是<strong>数据</strong>与<strong>数据的操作方法</strong>之间的耦合，将数据的操作方法独立于数据，使其可以自由演变。因此访问这更适合于那些<strong>数据稳定</strong>，但是数据的操作方法一遍的环境下。因此当操作方环境改变时，可以自由修改操作方法以适应操作环境，而不用修改原数据，实现操作方法的扩展。</p>
+</blockquote>
+<p>对应到 babel traverse 的实现，就是 AST(数据) 和 visitor（有很多操作方法） 分离，在 traverse（遍历）AST 的时候，调用注册的 visitor 来对其进行处理</p>
+<h4 id="路径（path）和作用域（scope）"><a href="#路径（path）和作用域（scope）" class="headerlink" title="路径（path）和作用域（scope）"></a>路径（path）和作用域（scope）</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">path</span>:<span class="title class_">NodePath</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>babel AST 中只包含源码的一些信息，但是操作 AST 时要拿到父节点的信息，并且也需要对 AST 增删改的方法，这些都在 path 对象里。</p>
+</blockquote>
+<blockquote>
+<p>scope 是作用域信息，javascript 中能生成作用域的就是模块、函数、块等，而且作用域之间会形成嵌套关系，也就是作用域链。babel 在遍历的过程中会生成作用域链保存在 path.scope 中。</p>
+</blockquote>
+<p> path api太强大， 要多用才熟悉</p>
+<h2 id="babel-x2F-types"><a href="#babel-x2F-types" class="headerlink" title="@babel&#x2F;types"></a>@babel&#x2F;types</h2><p><a target="_blank" rel="noopener" href="https://babeljs.io/docs/en/babel-types">@babel&#x2F;types</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>大致了解怎么去写一个babel插件，在转成AST后，在transform阶段运用设计模式的访问者模式（数据和数据的操作方法解耦），然后通过path相关api去实现逻辑，path的类型是<code>NodePath</code>,这个里面包含了AST的path 和scope（作用域链），通过对api的各种操作，实现我们要的结果</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">visitor</span>: &#123; </span><br><span class="line"><span class="title class_">ExportNamedDeclaration</span>(path) &#123; </span><br><span class="line">  <span class="keyword">const</span> &#123; node, scope &#125; = path;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>掘金小册<a target="_blank" rel="noopener" href="https://juejin.cn/book/6946117847848321055/section/6946582521672892456">babel插件通关秘籍</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jamiebuilds/babel-handbook">babel-handbook</a></p>
+
+    </div>
+
+</div>
+                
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+            </div>
+        </div>
+    </body>
+</html>
