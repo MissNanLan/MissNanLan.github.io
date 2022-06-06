@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+    <link rel="alternate icon" type="image/png" href="/img/favicon.png">
+    <title>南蓝的技术博客 | </title>
+    
+<link rel="stylesheet" href="/css/reset.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/markdown.css">
+
+    
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+    <body>
+        <div class="paper">
+            <div class="paper-main">
+                
+                    <div class="post-header">
+    <a class="logo" href="/">南蓝的技术博客</a>
+    <a class="go-home" href="/">
+        <svg width="8" height="14" viewBox="0 0 8 14">
+            <path d="M7 1L1 7l6 6" stroke="#000" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </a>
+</div>
+                
+                <div class="post-main">
+
+    
+        <div class="post-main-title">
+            JSX.Element VS ReactNode VS ReactElement
+        </div>
+        <div class="post-meta">
+            2022-06-05
+        </div>
+    
+
+    <div class="post-md">
+        <p>引起对这个问题好奇的原因是因为，发现在日常开发中，即用了JSX.Element,又用了ReactNode，对此颇有些困惑</p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/58123398/when-to-use-jsx-element-vs-reactnode-vs-reactelement">stackoverflow</a>也有一样的困惑</p>
+<h3 id="ReactNode"><a href="#ReactNode" class="headerlink" title="ReactNode"></a>ReactNode</h3><p>可以说是最大的层级</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/286a86f2af234e2abfc5b4c9c3b60340~tplv-k3u1fbpfcp-watermark.image" alt="未命名文件.jpg"></p>
+<p>我们可以顺着类型声明往上找可以发现</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">ReactNode</span> = <span class="title class_">ReactChild</span> | <span class="title class_">ReactFragment</span> | <span class="title class_">ReactPortal</span> | <span class="built_in">boolean</span> | <span class="literal">null</span> | <span class="literal">undefined</span>;</span><br></pre></td></tr></table></figure>
+<p>ReactNode是联合类型，由 <code>ReactChild、ReactFragment、ReactPortal、boolean、null、undefined</code>的集合.</p>
+<ul>
+<li>props.children是ReactNode类型</li>
+</ul>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/34d78ebc5d064e3a8ad8d9b9f1e415b7~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>class组件render返回的是ReactNode类型</li>
+</ul>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e120c3b896d7422e982351d8c7a17080~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://reactjs.org/docs/react-component.html#render">render</a></p>
+<h4 id="ReactChild"><a href="#ReactChild" class="headerlink" title="ReactChild"></a>ReactChild</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">ReactChild</span> = <span class="title class_">ReactElement</span> | <span class="title class_">ReactText</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ReactText</span> = <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Key</span> = <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">ReactElement</span>&lt;P = <span class="built_in">any</span>, T <span class="keyword">extends</span> <span class="built_in">string</span> | <span class="title class_">JSXElementConstructor</span>&lt;<span class="built_in">any</span>&gt; = <span class="built_in">string</span> | <span class="title class_">JSXElementConstructor</span>&lt;<span class="built_in">any</span>&gt;&gt; &#123;</span><br><span class="line">        <span class="attr">type</span>: T;</span><br><span class="line">        <span class="attr">props</span>: P;</span><br><span class="line">        <span class="attr">key</span>: <span class="title class_">Key</span> | <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReactFragment"><a href="#ReactFragment" class="headerlink" title="ReactFragment"></a>ReactFragment</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">ReactNodeArray</span> <span class="keyword">extends</span> <span class="title class_">Array</span>&lt;<span class="title class_">ReactNode</span>&gt; &#123;&#125;</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">ReactFragment</span> = &#123;&#125; | <span class="title class_">ReactNodeArray</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReactPortal"><a href="#ReactPortal" class="headerlink" title="ReactPortal"></a>ReactPortal</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">ReactPortal</span> <span class="keyword">extends</span> <span class="title class_">ReactElement</span> &#123;</span><br><span class="line">        <span class="attr">key</span>: <span class="title class_">Key</span> | <span class="literal">null</span>;</span><br><span class="line">        <span class="attr">children</span>: <span class="title class_">ReactNode</span>;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JSX-Element"><a href="#JSX-Element" class="headerlink" title="JSX.Element"></a>JSX.Element</h3><p>与ReactElement类似</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="variable language_">global</span> &#123;</span><br><span class="line">    <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">        <span class="keyword">interface</span> <span class="title class_">Element</span> <span class="keyword">extends</span> <span class="title class_">React</span>.<span class="title class_">ReactElement</span>&lt;<span class="built_in">any</span>, <span class="built_in">any</span>&gt; &#123; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>由以上可以看出， JSX.Element是继承React.Element. 并且函数式组件一般返回JSX.Element</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/488cfb355db14fff902275f254e1a7ee~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>图中函数组件infer类型为JSX.Element</p>
+<h3 id="其它-Node与Element的区别"><a href="#其它-Node与Element的区别" class="headerlink" title="其它-Node与Element的区别"></a>其它-Node与Element的区别</h3><p>Node 是一个接口，各种类型的 DOM API 对象会从这个接口继承</p>
+<p>Node的类型</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9ef9d44f9b6a411686d45fb2e7f624a4~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e78743f5a48443e8197c235086cf0cc~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Node">nodeType</a></p>
+
+    </div>
+
+</div>
+                
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+            </div>
+        </div>
+    </body>
+</html>

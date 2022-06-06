@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+    <link rel="alternate icon" type="image/png" href="/img/favicon.png">
+    <title>南蓝的技术博客 | </title>
+    
+<link rel="stylesheet" href="/css/reset.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/markdown.css">
+
+    
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+    <body>
+        <div class="paper">
+            <div class="paper-main">
+                
+                    <div class="post-header">
+    <a class="logo" href="/">南蓝的技术博客</a>
+    <a class="go-home" href="/">
+        <svg width="8" height="14" viewBox="0 0 8 14">
+            <path d="M7 1L1 7l6 6" stroke="#000" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </a>
+</div>
+                
+                <div class="post-main">
+
+    
+        <div class="post-main-title">
+            依赖版本锁不锁
+        </div>
+        <div class="post-meta">
+            2022-06-04
+        </div>
+    
+
+    <div class="post-md">
+        <p>原文链接：<a target="_blank" rel="noopener" href="https://wx.zsxq.com/dweb2/index/topic_detail/185452122241212">依赖版本锁不锁</a></p>
+<p>本来只是看下依赖预打包是怎么回事，然后被迫又重新读了这篇文章。有几点值得思考的</p>
+<h2 id="关于依赖版本到底锁不锁，锁？如何保持更新，不锁？如何保持稳定"><a href="#关于依赖版本到底锁不锁，锁？如何保持更新，不锁？如何保持稳定" class="headerlink" title="关于依赖版本到底锁不锁，锁？如何保持更新，不锁？如何保持稳定"></a>关于依赖版本到底锁不锁，锁？如何保持更新，不锁？如何保持稳定</h2><p> <em>中间商锁依赖，定期更新，并对此负责</em></p>
+<p>1、 依赖分为node依赖和browser依赖，其实我一直区分不了这两者。后者考虑tree-sharking、产物尺寸等</p>
+<p>2、 依赖从一个维度分为间接依赖和直接依赖，锁直接依赖只能解决部分问题</p>
+<p>3、目前社区已有的解决方案</p>
+<p>1）cnpm提供的bug-versions</p>
+<p>2）npm提供的resolutions</p>
+<ol start="3">
+<li>侵入式代码patch-package</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/patch-package">patch-package</a>，这个点学到了。因为我在实际工作中也碰到过，之前是forked的或者拷贝源码到本地，如今学到这一招<code>patch-package</code>。</p>
+<p>以下翻译自<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/patch-package">patch-package</a></p>
+<h2 id="patch-package"><a href="#patch-package" class="headerlink" title="patch-package"></a>patch-package</h2><h3 id="Patch-相比-forked，好处在于"><a href="#Patch-相比-forked，好处在于" class="headerlink" title="Patch 相比 forked，好处在于"></a>Patch 相比 forked，好处在于</h3><ul>
+<li><p>有时forked是需要额外的构建步骤</p>
+</li>
+<li><p>当依赖发生变化的时候，会告诉你一个红色的提示，让你检查你的修复是否依然有效</p>
+</li>
+<li><p>将你的补丁与依赖它们的代码放在一起。</p>
+</li>
+<li><p>patches 可以是正常review过程中的一部分，但是forked 不会</p>
+</li>
+</ul>
+<h3 id="什么时候使用forked"><a href="#什么时候使用forked" class="headerlink" title="什么时候使用forked"></a>什么时候使用forked</h3><ul>
+<li><p>变化太大了无法原地开发</p>
+</li>
+<li><p>这种变化对他人有用</p>
+</li>
+<li><p>你可以创建一个合适的pr</p>
+</li>
+</ul>
+<h3 id="Patch-有危险吗"><a href="#Patch-有危险吗" class="headerlink" title="Patch 有危险吗"></a>Patch 有危险吗</h3><p>不会.有几个点必须要记住</p>
+<ul>
+<li><p>在有没有patch文件的分支切换时，很容易忘记运行<code>yarn</code> or <code>npm</code></p>
+</li>
+<li><p>如果长期的补丁影响到一个定期更新的代码区域，而你也想定期更新软件包，那么维护的成本就会很高。</p>
+</li>
+<li><p>大的semantic变化很难review，让它们小而且明显，或者添加注释</p>
+</li>
+<li><p>改变也会影响其他未触及的软件包的行为。通常情况下，这种情况会很明显，而且往往是希望如此，但还是要小心。（这句翻译好生硬，西巴）</p>
+</li>
+</ul>
+<h2 id="umi本身自己是怎么解决的"><a href="#umi本身自己是怎么解决的" class="headerlink" title="umi本身自己是怎么解决的"></a>umi本身自己是怎么解决的</h2><blockquote>
+<p>背后主要是uⅱ层对依赖做了彻底锁，包含间接依赖，通过预打包依赖的方式，就算再过10年，也不会出现因node依赖更新导致umi挂的情况。此外还有些细节，比如babel runtime和polyfill等browser依赖的锁定等。</p>
+</blockquote>
+<p> ###能套用到browser吗？</p>
+<p>不能。因为预打包会让tree-shaking失效。node库大部分能在流程中发现，但是browser库必须要到线上才能发现。</p>
+<blockquote>
+<p>所以importmaps锁+有人担保的类xx-antd中间依赖+灰度可能是browser依赖的完美解。至于为什么procode为啥直接用x-antd不完美？因为间接依赖没锁。</p>
+</blockquote>
+<p>哎，学习学着学着就发散了</p>
+
+    </div>
+
+</div>
+                
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+            </div>
+        </div>
+    </body>
+</html>
