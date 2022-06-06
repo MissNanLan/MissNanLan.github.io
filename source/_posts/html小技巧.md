@@ -4,7 +4,10 @@ date: 2022-06-06 21:18:29
 tags: html
 ---
 
+```
+
 // 1、捕获摄像头，user 表示前置摄像头，environment 表示后置摄像头
+
 <input type="file" capture="user" accept="image/*" />
 
 // 2、每 10s 刷新一次
@@ -29,3 +32,5 @@ tags: html
 
 // 8、声明资源文件的下载
 <a href="image.png" download>
+``
+```
